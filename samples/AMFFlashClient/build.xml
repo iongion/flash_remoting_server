@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="AMF Flash Client" basedir="." default="deployProject">
+    
+    <!-- file description -->
+    <description>AMF Flash Client - Build Script</description>
+    
+    <property environment="env"/>
+    
+    <!--location of property file -->
+    <property file="./build.properties" description="properities for builds"/>
+    
+    <!-- additional tasks -->
+    <taskdef resource="flexTasks.tasks" classpath="${FlexTasks.file}"/>
+    <!-- ======================================================== -->
+    
+    <!-- Compile Project ======================================== -->
+    <target name="deployProject" depends="cleanDeploy,compileApplication,deployApplication" description="compiles application"/>
+    <!-- ======================================================== -->
+    
+    <!-- Compile Application ==================================== -->
+    <target name="compileApplication">
+        <mxmlc file="${Project.Src.dir}/ro/gion/clients/${Application.name}.as"
+            incremental="true"
+            actionscript-file-encoding="UTF-8"
+            output="${Output.dir}/${Application.name}.swf"
+            debug="${Debug.Boolean}"
+            optimize="${Debug.Boolean}"
+            keep-generated-actionscript="false">
+            <load-config filename="${FLEX_HOME}/frameworks/flex-config.xml"/>
+            <source-path path-element="${FLEX_HOME}/frameworks"/>
+            <default-background-color>#1787AB</default-background-color>
+            <static-link-runtime-shared-libraries>true</static-link-runtime-shared-libraries>
+            <default-frame-rate>30</default-frame-rate>
+            <default-size width="960" height="536"/>
+            <metadata>
+                <creator>Ionut Stoica</creator>
+                <publisher>gion.ro</publisher>
+                <language>EN</language>
+            </metadata>
+            <compiler.source-path path-element="${External.Src.dir}" />
+            <compiler.source-path path-element="${Project.Src.dir}" />
+            <compiler.library-path dir="${External.Libs.dir}" append="true">
+                <include name="as3commons-logging-2.0.swc"/>
+                <include name="MinimalComps_0_9_9.swc"/>
+            </compiler.library-path>
+            <fonts>
+                <manager class="flash.fonts.AFEFontManager"/>
+            </fonts>
+        </mxmlc>
+        
+        <!--
+        <echo>Run SWF</echo>
+        <exec executable="flashplayer">
+            <arg value="${Output.dir}/${Application.name}.swf"/>
+        </exec>
+        -->
+        
+    </target>
+    <!-- ======================================================== -->
+
+    <!-- Deploy Application ==================================== -->
+    <target name="deployApplication">
+        <copy todir="${Deploy.dir}">
+            <fileset dir="${Output.dir}">
+                <include name="**/*"/>
+                <exclude name="${Application.name}.swf.cache"/>
+            </fileset>
+        </copy>
+    </target>
+    <!-- ======================================================== -->
+    
+    <!-- Clean Up =============================================== -->
+    <target name="cleanDeploy" description="Cleans the deploy file">
+        <echo>Deleting Deploy SWF...</echo>
+        <delete file="${Output.dir}/${Application.name}.swf" failOnError="true"/>
+        <delete file="${Deploy.dir}/${Application.name}.swf" failOnError="true"/>
+    </target>
+    
+</project>

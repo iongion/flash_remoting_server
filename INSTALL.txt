@@ -1,0 +1,32 @@
+FOREWORD
+
+The only module dependency is on the services module from http://drupal.org/project/services
+By default the module supports 3 types of AMF middlewares for PHP:
+- The old AMFPHP from http://amfphp.sourceforge.net
+- The unmaintained but super fast SabreAMF from https://github.com/evert/SabreAMF
+- The up to date and officialy backed by Zend and Adobe, Zend AMF from http://framework.zend.com/download/amf
+Which of them you will use is a subjective decision.
+
+INSTALLATION
+
+1) Install the module.
+2) Go to:
+    Site Building > Services -> Settings -> Flash Remoting
+3) Choose your preffered backend
+4) Type the version of your backend
+   (if you leave it empty, a default value will be generated, this value is the one used to develop and test this module)
+5) Save to apply the settings
+6) Visit:
+    Reports -> Status report
+   To ensure you have all the required tools setup correctly.
+
+For example, if you want to use Zend AMF version 1.11.6 as backend for flashremoting_server, you need to
+
+1) Head to http://framework.zend.com/download/amf and download the archive with Zend AMF
+  - It is recommended you download the entire Zend Framework and install it in Drupal's libraries folder
+
+2) Extract the Zend AMF(or Zend Framework library) archive to sites/all/libraries/1.11.6
+  - In support folder of this module you can see a layout with all the remoting frameworks installed
+
+3) Proffit by writing your own services and access them through Flash or any AMF aware client.
+

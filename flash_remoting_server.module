@@ -1,0 +1,67 @@
+<?php
+/**
+ * Implementation of hook_server_info().
+ */
+function flash_remoting_server_server_info() {
+  return array(
+    'name' => 'Flash remoting',
+    'path' => 'amf',
+    'settings' => array(
+      'file' => array('inc', 'flash_remoting_server', 'flash_remoting_server.admin.forms'),
+      'form' => '_flash_remoting_server_settings',
+      'submit' => '_flash_remoting_server_settings_submit',
+    ),
+  );
+}
+
+/**
+ * Implementation of hook_server().
+ */
+function flash_remoting_server_server() {
+  module_load_include('inc', 'flash_remoting_server');
+  try {
+    require_once dirname(__FILE__).'/classes/Drupal/AMF/Server.php';
+    $server = new Drupal_AMF_Server();
+    return $server->handle();
+  } catch (Exception $e) {
+    print $e->getMessage();
+    watchdog('amf', substr($e->getMessage(), 0, 255));
+    $code = $e->getCode();
+    switch ($code) {
+      case 204:
+        drupal_set_header('HTTP/1.0 204 No Content: ' . $e->getMessage());
+        break;
+      case 304:
+        drupal_set_header('HTTP/1.0 304 Not Modified: ' . $e->getMessage());
+        break;
+      case 401:
+        drupal_set_header('HTTP/1.0 401 Unauthorized: ' . $e->getMessage());
+        break;
+      case 404:
+        drupal_set_header('HTTP/1.0 404 Not found: ' . $e->getMessage());
+        break;
+      case 406:
+        drupal_set_header('HTTP/1.0 406 Not Acceptable: ' . $e->getMessage());
+        break;
+      default:
+        if ($code >= 400 && $code < 600) {
+          drupal_set_header('HTTP/1.0 ' . $code . ' ' . $e->getMessage());
+        }
+        else {
+          drupal_set_header('HTTP/1.0 500 An error occurred: (' . $code . ') ' . $e->getMessage());
+        }
+        break;
+    }
+    if (method_exists($e, 'getData')) {
+      return $e->getData();
+    }
+  }
+}
+
+function _flash_remoting_server_remoting_backend_path_get($framework, $version) {
+  return sprintf(
+    'sites/all/libraries/%s/%s', 
+    $framework, 
+    $version
+  );
+}
