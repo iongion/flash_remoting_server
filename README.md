@@ -1,4 +1,5 @@
-flash_remoting_server
+Unified flash remoting server
 =====================
 
-Unified AMF Drupal services 3 based server
+This is a Drupal 6 module for providing an unified services 3 server interface for exposing resources to various AMF capable clients.
+
